@@ -5,7 +5,16 @@
 
 import { GoogleGenAI, GenerateContentResponse, Modality } from "@google/genai";
 
-// Helper function to convert a File object to a Gemini API Part
+/**
+ * Converts a File object into a GoogleGenerativeAI.Part object.
+ * This is a necessary step to send image data to the Gemini API.
+ * The function reads the file as a data URL, extracts the MIME type and base64 data,
+ * and returns it in the format expected by the API.
+ *
+ * @param file The File object to convert.
+ * @returns A promise that resolves to an object containing the inline data for the Gemini API.
+ * @throws {Error} If the file cannot be read or if the data URL format is invalid.
+ */
 const fileToPart = async (file: File): Promise<{ inlineData: { mimeType: string; data: string; } }> => {
     const dataUrl = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
@@ -24,9 +33,19 @@ const fileToPart = async (file: File): Promise<{ inlineData: { mimeType: string;
     return { inlineData: { mimeType, data } };
 };
 
+/**
+ * Processes the response from the Gemini API.
+ * It handles potential errors, such as blocked prompts or unexpected finish reasons,
+ * and extracts the base64 image data from a successful response.
+ *
+ * @param response The full response object from the Gemini API's generateContent method.
+ * @param context A string describing the operation (e.g., "edit", "filter") for better error messages.
+ * @returns The data URL of the generated image as a string.
+ * @throws {Error} If the API response indicates an error or does not contain image data.
+ */
 const handleApiResponse = (
     response: GenerateContentResponse,
-    context: string // e.g., "edit", "filter", "adjustment"
+    context: string
 ): string => {
     // 1. Check for prompt blocking first
     if (response.promptFeedback?.blockReason) {
@@ -65,10 +84,10 @@ const handleApiResponse = (
 
 /**
  * Generates an edited image using generative AI based on a text prompt and a specific point.
- * @param originalImage The original image file.
- * @param userPrompt The text prompt describing the desired edit.
- * @param hotspot The {x, y} coordinates on the image to focus the edit.
- * @returns A promise that resolves to the data URL of the edited image.
+ * @param originalImage The original image file to be edited.
+ * @param userPrompt The text prompt from the user describing the desired edit.
+ * @param hotspot The {x, y} coordinates on the image where the edit should be focused.
+ * @returns A promise that resolves to the data URL (string) of the edited image.
  */
 export const generateEditedImage = async (
     originalImage: File,
@@ -108,10 +127,10 @@ Output: Return ONLY the final edited image. Do not return text.`;
 };
 
 /**
- * Generates a filtered image using generative AI based on a text prompt.
- * @param originalImage The original image file.
- * @param userPrompt The text prompt describing the desired global filter.
- * @returns A promise that resolves to the data URL of the filtered image.
+ * Generates a new image by applying a global filter using generative AI.
+ * @param originalImage The original image file to apply the filter to.
+ * @param userPrompt The text prompt describing the desired global filter style.
+ * @returns A promise that resolves to the data URL (string) of the filtered image.
  */
 export const generateFilteredImage = async (
     originalImage: File,
@@ -148,10 +167,12 @@ Output: Return ONLY the final edited image. Do not return text.`;
 
 
 /**
- * Replaces a specific logo in the image footer using generative AI.
- * @param originalImage The original image file.
- * @param newLogoImage The new logo PNG file to use for replacement.
- * @returns A promise that resolves to the data URL of the modified image.
+ * Replaces a specific logo in an image's footer using generative AI.
+ * This function is highly specific and targets a logo for 'Jack Và' in a dark blue footer,
+ * replacing it with the provided new logo.
+ * @param originalImage The original image file containing the logo to be replaced.
+ * @param newLogoImage The new logo file (as a PNG) to be placed in the image.
+ * @returns A promise that resolves to the data URL (string) of the modified image.
  */
 export const generateSwappedLogoImage = async (
     originalImage: File,

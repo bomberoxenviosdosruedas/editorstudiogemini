@@ -5,34 +5,65 @@
 
 import React, { useState } from 'react';
 
+/**
+ * Props for the AdjustmentPanel component.
+ * @property {(prompt: string) => void} onApplyAdjustment - Callback function to apply an adjustment with a given prompt.
+ * @property {boolean} isLoading - Indicates if an adjustment operation is currently in progress.
+ */
 interface AdjustmentPanelProps {
   onApplyAdjustment: (prompt: string) => void;
   isLoading: boolean;
 }
 
+/**
+ * A UI component that provides users with a set of preset image adjustments
+ * and a custom input field for more specific changes. This panel is intended
+ * for broad, non-localized image modifications.
+ *
+ * @param {AdjustmentPanelProps} props - The props for the component.
+ * @returns {React.ReactElement} The rendered adjustment panel.
+ */
 const AdjustmentPanel: React.FC<AdjustmentPanelProps> = ({ onApplyAdjustment, isLoading }) => {
   const [selectedPresetPrompt, setSelectedPresetPrompt] = useState<string | null>(null);
   const [customPrompt, setCustomPrompt] = useState('');
 
+  /**
+   * A list of predefined adjustment presets available to the user.
+   * Each preset has a user-friendly name and a detailed prompt for the AI.
+   */
   const presets = [
-    { name: 'Desenfoque de Fondo', prompt: 'Apply a realistic depth-of-field effect, making the background blurry while keeping the main subject in sharp focus.' },
-    { name: 'Mejorar Detalles', prompt: 'Slightly enhance the sharpness and details of the image without making it look unnatural.' },
-    { name: 'Luz Más Cálida', prompt: 'Adjust the color temperature to give the image warmer, golden-hour style lighting.' },
-    { name: 'Luz de Estudio', prompt: 'Add dramatic, professional studio lighting to the main subject.' },
+    { name: 'Background Blur', prompt: 'Apply a realistic depth-of-field effect, making the background blurry while keeping the main subject in sharp focus.' },
+    { name: 'Enhance Details', prompt: 'Slightly enhance the sharpness and details of the image without making it look unnatural.' },
+    { name: 'Warmer Light', prompt: 'Adjust the color temperature to give the image warmer, golden-hour style lighting.' },
+    { name: 'Studio Light', prompt: 'Add dramatic, professional studio lighting to the main subject.' },
   ];
 
   const activePrompt = selectedPresetPrompt || customPrompt;
 
+  /**
+   * Handles the click event on a preset button.
+   * Sets the selected preset and clears any custom prompt.
+   * @param {string} prompt - The prompt associated with the clicked preset.
+   */
   const handlePresetClick = (prompt: string) => {
     setSelectedPresetPrompt(prompt);
     setCustomPrompt('');
   };
 
+  /**
+   * Handles changes to the custom prompt input field.
+   * Updates the custom prompt state and clears any selected preset.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The input change event.
+   */
   const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomPrompt(e.target.value);
     setSelectedPresetPrompt(null);
   };
 
+  /**
+   * Handles the click on the "Apply Adjustment" button.
+   * Calls the onApplyAdjustment prop with the currently active prompt.
+   */
   const handleApply = () => {
     if (activePrompt) {
       onApplyAdjustment(activePrompt);
@@ -41,7 +72,7 @@ const AdjustmentPanel: React.FC<AdjustmentPanelProps> = ({ onApplyAdjustment, is
 
   return (
     <div className="w-full bg-gray-800/50 border border-gray-700 rounded-lg p-4 flex flex-col gap-4 animate-fade-in backdrop-blur-sm">
-      <h3 className="text-lg font-semibold text-center text-gray-300">Aplica un Ajuste Profesional</h3>
+      <h3 className="text-lg font-semibold text-center text-gray-300">Apply a Professional Adjustment</h3>
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {presets.map(preset => (
@@ -60,7 +91,7 @@ const AdjustmentPanel: React.FC<AdjustmentPanelProps> = ({ onApplyAdjustment, is
         type="text"
         value={customPrompt}
         onChange={handleCustomChange}
-        placeholder="O describe un ajuste (ej., 'cambiar el fondo a un bosque')"
+        placeholder="Or describe an adjustment (e.g., 'change background to a forest')"
         className="flex-grow bg-gray-800 border border-gray-600 text-gray-200 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 focus:outline-none transition w-full disabled:cursor-not-allowed disabled:opacity-60 text-base"
         disabled={isLoading}
       />
@@ -72,7 +103,7 @@ const AdjustmentPanel: React.FC<AdjustmentPanelProps> = ({ onApplyAdjustment, is
                 className="w-full bg-gradient-to-br from-blue-600 to-blue-500 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-px active:scale-95 active:shadow-inner text-base disabled:from-blue-800 disabled:to-blue-700 disabled:shadow-none disabled:cursor-not-allowed disabled:transform-none"
                 disabled={isLoading || !activePrompt.trim()}
             >
-                Aplicar Ajuste
+                Apply Adjustment
             </button>
         </div>
       )}
