@@ -4,16 +4,10 @@
 */
 import React from 'react';
 
-/**
- * A simple SVG spinner component to indicate loading states.
- * It uses CSS animations to create a spinning effect.
- *
- * @returns {React.ReactElement} The rendered SVG spinner.
- */
 const Spinner: React.FC = () => {
   return (
     <svg
-      className="animate-spin h-12 w-12 text-white"
+      className="animate-spin h-16 w-16 text-zinc-800 mx-auto"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
