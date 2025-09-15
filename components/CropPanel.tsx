@@ -5,6 +5,13 @@
 
 import React, { useState } from 'react';
 
+/**
+ * Props for the CropPanel component.
+ * @property {() => void} onApplyCrop - Callback function to execute when the crop is applied.
+ * @property {(aspect: number | undefined) => void} onSetAspect - Callback to set the desired aspect ratio for the crop area.
+ * @property {boolean} isLoading - Indicates if a parent process is running, disabling the panel.
+ * @property {boolean} isCropping - Indicates if a crop area is currently being selected.
+ */
 interface CropPanelProps {
   onApplyCrop: () => void;
   onSetAspect: (aspect: number | undefined) => void;
@@ -12,16 +19,35 @@ interface CropPanelProps {
   isCropping: boolean;
 }
 
+/**
+ * Defines the available aspect ratio options for cropping.
+ */
 type AspectRatio = 'free' | '1:1' | '16:9';
 
+/**
+ * A UI panel for controlling image cropping.
+ * It provides options for setting a fixed aspect ratio and a button to apply the crop.
+ * This component is currently a placeholder for a potential cropping feature.
+ *
+ * @param {CropPanelProps} props - The props for the component.
+ * @returns {React.ReactElement} The rendered crop panel.
+ */
 const CropPanel: React.FC<CropPanelProps> = ({ onApplyCrop, onSetAspect, isLoading, isCropping }) => {
   const [activeAspect, setActiveAspect] = useState<AspectRatio>('free');
   
+  /**
+   * Handles changing the aspect ratio.
+   * @param {AspectRatio} aspect - The name of the aspect ratio preset.
+   * @param {number | undefined} value - The numerical value of the aspect ratio, or undefined for freeform.
+   */
   const handleAspectChange = (aspect: AspectRatio, value: number | undefined) => {
     setActiveAspect(aspect);
     onSetAspect(value);
   }
 
+  /**
+   * A list of aspect ratio presets available to the user.
+   */
   const aspects: { name: AspectRatio, value: number | undefined }[] = [
     { name: 'free', value: undefined },
     { name: '1:1', value: 1 / 1 },
