@@ -216,7 +216,18 @@ const App: React.FC = () => {
         console.error("Raw error during logo swap fetch:", err);
         let errorMessage: string;
         if (err instanceof Error) {
-            errorMessage = err.message;
+            // Try to parse Gemini API error response
+            try {
+                const parsedError = JSON.parse(err.message);
+                if (parsedError.error && parsedError.error.message) {
+                    errorMessage = parsedError.error.message;
+                } else {
+                    errorMessage = err.message;
+                }
+            } catch {
+                // If parsing fails, use the original message
+                errorMessage = err.message;
+            }
         } else if (err && typeof err === 'object' && 'type' in err) {
             // Handle ProgressEvent or similar network errors
             errorMessage = 'Error de red al cargar el archivo logo_nuevo.svg. Verifica que el archivo existe y es accesible.';
