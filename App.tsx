@@ -213,9 +213,17 @@ const App: React.FC = () => {
         addImageToHistory(newImageFile);
         setSwapCompleted(true);
     } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Ocurrió un error desconocido.';
+        console.error("Raw error during logo swap fetch:", err);
+        let errorMessage: string;
+        if (err instanceof Error) {
+            errorMessage = err.message;
+        } else if (err && typeof err === 'object' && 'type' in err) {
+            // Handle ProgressEvent or similar network errors
+            errorMessage = 'Error de red al cargar el archivo logo_nuevo.svg. Verifica que el archivo existe y es accesible.';
+        } else {
+            errorMessage = 'Ocurrió un error desconocido.';
+        }
         setError(`No se pudo cambiar el logo. ${errorMessage}`);
-        console.error(err);
     } finally {
         setIsLoading(false);
     }
